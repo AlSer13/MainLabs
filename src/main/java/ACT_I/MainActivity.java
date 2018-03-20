@@ -1,5 +1,5 @@
 package ACT_I;
-
+/*
 import Characteristics.*;
 
 public class MainActivity {
@@ -30,7 +30,7 @@ public class MainActivity {
             @Override
             protected void doIt() {
             }
-        });*/
+        });
         ПравЛиТигр(Tigger.Presumable_WTP_Modifyer == Winnie.mod);
         Now.next();
         Rabbit.moveTo(Tigger.getHome());
@@ -75,7 +75,7 @@ public class MainActivity {
             System.out.println("Кроме Тигра");
         }
     }
-}
+}*/
 
 /* Now.set(Time.relday.FIRST_DAY, Time.daytime.DAY);
             if (Now.getDay() == Time.relday.LATER) {

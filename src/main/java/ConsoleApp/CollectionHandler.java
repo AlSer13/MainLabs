@@ -1,9 +1,11 @@
-package ACT_I;
+package ConsoleApp;
 
 import Characteristics.Event;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -39,6 +41,5 @@ public class CollectionHandler {
             Events.push(event);
         }
     }
-
 
 }

@@ -1,11 +1,13 @@
 package Characteristics;
 
-import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.TreeMap;
 
 public class WTPcharacter implements Moveable {
     private String name;
     private Place location;
     private Home home;
+    private TreeMap<GregorianCalendar, Event> plans = new TreeMap<>();
 
     WTPcharacter(String name) { //создаем персонажа и его собственный дом
         this.name = name;
@@ -22,12 +24,12 @@ public class WTPcharacter implements Moveable {
 
     public void moveTo(Place location) {
         this.location = location;
-        System.out.println(this.getName() + " перемещается в " + location.getName());
+        System.out.println(this.getName() + " перемещается в " + location.name);
     }
 
-    public void SetANameplate(Place location, String inscription){
+ /*   public void SetANameplate(Place location, String inscription){
         location.nameplate = location.new Nameplate(location, inscription, this);
-    }
+    }*/
 
     public String getName() {
         return name;
@@ -61,44 +63,23 @@ public class WTPcharacter implements Moveable {
     }*/
 
     //plans
-    private Event[][] plannedaction = new Event[3][3];
 
-    Event getPlans(Time t) {
-        return plannedaction[t.getDay().ordinal()][t.getTime().ordinal()];
+    Event getPlans(GregorianCalendar d) {
+        return plans.get(d);
     }
+
     public void addPlan(Event e) throws TooBuisyException {
-        Time t = e.getTime();
-        if (this.IsFree(t) && !e.getParticipants().contains(this)){
-            plannedaction[t.getDay().ordinal()][t.getTime().ordinal()] = e;
-            e.addParticipant(this);
-        } else  throw new TooBuisyException();
+        GregorianCalendar d = e.getDate();
+        e.addParticipant(this);
+        this.plans.put(d, e);
     }
-    private boolean IsFree(Time t) {
-        boolean b = plannedaction[t.getDay().ordinal()][t.getTime().ordinal()] == null;
-        return (b);
+
+    public boolean isFree(GregorianCalendar beg, GregorianCalendar end) {
+        GregorianCalendar floor = plans.floorKey(beg);
+        GregorianCalendar ceiling = plans.ceilingKey(end);
+        return (floor==null)||(end == null)||(ceiling.after(end)||(beg.after(floor)));
     }
     // equals and hashcode
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WTPcharacter that = (WTPcharacter) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (home != null ? !home.equals(that.home) : that.home != null) return false;
-        return Arrays.deepEquals(plannedaction, that.plannedaction);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (home != null ? home.hashCode() : 0);
-        result = 31 * result + Arrays.deepHashCode(plannedaction);
-        return result;
-    }
 }

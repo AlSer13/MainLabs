@@ -1,17 +1,14 @@
 package Characteristics;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Place {
-    private String name;
+    public String name;
    // private List<Place> nearby = new ArrayList<>();
    // public Nameplate nameplate;
     public Place(String name){
         this.name = name;
     }
 
-   /** public void addNeighbours(Place... nearby){
+   /* public void addNeighbours(Place... nearby){
         for(Place neighbour : nearby) {
             if (!this.nearby.contains(neighbour)){
                 this.nearby.add(neighbour);
@@ -48,7 +45,7 @@ public class Place {
             this.inscription = inscription;
             this.author = author;
         }
-    }**/
+    }*/
 
     //equals and hashcode
 

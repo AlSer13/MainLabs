@@ -1,19 +1,15 @@
 package Characteristics;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class Event {
+public class Event implements Comparable<Event> {
     private List<WTPcharacter> Participants = new ArrayList<>();
-    private Time time;
+    private GregorianCalendar date;
     private Place place;
-    public String name;
-    private boolean exact;
+    private String name;
 
-    public Event(Place place, Time time, boolean exact, WTPcharacter... participants){
+    public Event(Place place, GregorianCalendar date, WTPcharacter... participants){
         this.place = place;
-        this.time = time;
-        this.exact = exact;
+        this.date = date;
         this.Participants.addAll(Arrays.asList(participants));
     }
 
@@ -22,14 +18,20 @@ public class Event {
     }
 
     public void addParticipant(WTPcharacter participant) throws TooBuisyException {
-        this.Participants.add(participant);
-        if (participant.getPlans(time)!=this) {
-            participant.addPlan(this);
-        }
+        GregorianCalendar end = date;
+        end.add(Calendar.HOUR, 1);
+        if (participant.isFree(date, end)) {
+            this.Participants.add(participant);
+        } else throw new TooBuisyException();
     }
 
-    public Time getTime() {
-        return time;
+    public GregorianCalendar getDate() {
+        return date;
+    }
+
+    @Override
+    public int compareTo(Event o) {
+        return date.compareTo(o.getDate());
     }
 
     @Override
@@ -39,18 +41,16 @@ public class Event {
 
         Event event = (Event) o;
 
-        if (exact != event.exact) return false;
-        if (Participants != null ? !Participants.equals(event.Participants) : event.Participants != null) return false;
-        if (time != null ? !time.equals(event.time) : event.time != null) return false;
-        return place != null ? place.equals(event.place) : event.place == null;
+        if (date != null ? !date.equals(event.date) : event.date != null) return false;
+        if (place != null ? !place.equals(event.place) : event.place != null) return false;
+        return name != null ? name.equals(event.name) : event.name == null;
     }
 
     @Override
     public int hashCode() {
-        int result = Participants != null ? Participants.hashCode() : 0;
-        result = 31 * result + (time != null ? time.hashCode() : 0);
+        int result = date != null ? date.hashCode() : 0;
         result = 31 * result + (place != null ? place.hashCode() : 0);
-        result = 31 * result + (exact ? 1 : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 }

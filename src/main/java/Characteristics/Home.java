@@ -15,12 +15,6 @@ public class Home extends Place {
             this.owner.add(owner);
     }
 
-    public void showOwners() {
-        for (WTPcharacter owner : this.owner){
-            System.out.println(owner.getName());
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

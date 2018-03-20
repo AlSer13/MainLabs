@@ -1,10 +1,15 @@
 package ACT_I;
-import Characteristics.*;
+
+import Characteristics.Event;
+import Characteristics.Place;
+import Characteristics.WTPcharacter;
+
+import java.util.GregorianCalendar;
 
 public class Expotition extends Event {
     private Place whereTo;
-    Expotition(Place fromWhere, Place whereTo, Time time, boolean exact, WTPcharacter... participants){
-        super(fromWhere, time, exact, participants);
+    Expotition(Place fromWhere, Place whereTo, GregorianCalendar date, WTPcharacter... participants){
+        super(fromWhere, date, participants);
         this.whereTo = whereTo;
     }
     protected void doIt(){
