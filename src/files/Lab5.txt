@@ -1,4 +1,0 @@
-{'name':'Expotition', 'Time': {'day':relday.LATER, 'time':daytime.MORNING},'place':{'name':'Northpole'}}
-{'name':'For the Honey'}
-{'name':'To the field'}
-{'name':'Horosho'}

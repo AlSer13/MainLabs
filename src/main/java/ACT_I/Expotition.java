@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 public class Expotition extends Event {
     private Place whereTo;
     Expotition(Place fromWhere, Place whereTo, GregorianCalendar date, WTPcharacter... participants){
-        super(fromWhere, date, participants);
+        super("expotition",fromWhere, date, participants);
         this.whereTo = whereTo;
     }
     protected void doIt(){

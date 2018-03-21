@@ -1,13 +1,18 @@
 package Characteristics;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Event implements Comparable<Event> {
     private List<WTPcharacter> Participants = new ArrayList<>();
-    private GregorianCalendar date;
-    private Place place;
-    private String name;
+    public GregorianCalendar date;
+    public Place place;
+    public String name;
 
-    public Event(Place place, GregorianCalendar date, WTPcharacter... participants){
+    public Event(String name, Place place, GregorianCalendar date, WTPcharacter... participants){
+        this.name = name;
         this.place = place;
         this.date = date;
         this.Participants.addAll(Arrays.asList(participants));
@@ -17,13 +22,13 @@ public class Event implements Comparable<Event> {
         return Participants;
     }
 
-    public void addParticipant(WTPcharacter participant) throws TooBuisyException {
+   /* public void addParticipant(WTPcharacter participant) throws TooBuisyException {
         GregorianCalendar end = date;
         end.add(Calendar.HOUR, 1);
         if (participant.isFree(date, end)) {
             this.Participants.add(participant);
         } else throw new TooBuisyException();
-    }
+    }*/
 
     public GregorianCalendar getDate() {
         return date;
