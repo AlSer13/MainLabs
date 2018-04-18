@@ -1,26 +1,73 @@
 package ConsoleApp;
 
 
+import Characteristics.Event;
+
 import java.io.File;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
-import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 import static ConsoleApp.Instruments.*;
 
 public class Main {
+    void ref(Event e) {
+        WeakReference<Event> ref = new WeakReference<>(e);
+        ref.get();
+    }
     public static void main(String[] args) {
         CollectionHandler ch = new CollectionHandler();
-        ch.file = new File(extractFilePath(args[0]), extractFileName(args[0]));
-        ch.load();
+        ShutdownHook shutdownHook = new ShutdownHook(ch);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        try {
+            ch.file = new File(extractFilePath(args[0]), extractFileName(args[0]));
+        } catch (NullPointerException e){
+            System.out.println("You should enter the path");
+            System.exit(1);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Not enough arguments");
+        }
+        try {
+            ch.load();
+        } catch (SecurityException e) {
+            System.out.println("Permission to the file Denied");
+        }
+        catch (IOException | NullPointerException e){
+            System.out.println("Wrong input file. Enter the command again.");
+            System.exit(1);
+        }
         String exitCheck = "";
         do {
-            Scanner in = new Scanner(System.in);
+            System.out.println("Enter a command:");
             try {
-                ArrayList<String> cmd = parseCmd(in.nextLine());
+                ArrayList<String> cmd = parseCmd();
                 exitCheck = cmd.get(0);
                 try {
                     switch (cmd.get(0)) {
+                        case "hello": {
+                            System.out.println("What's up?");
+                        } break;
+                        case "help": {
+                            System.out.println("•\tremove_last: удалить последний элемент из коллекции\n" +
+                                    "•\timport {String path}: добавить в коллекцию все данные из файла\n" +
+                                    "•\tremove_all {element}: удалить из коллекции все элементы, эквивалентные заданному\n" +
+                                    "•\treorder: отсортировать коллекцию в порядке, обратном нынешнему\n" +
+                                    "•\tsave: сохранить коллекцию в файл\n" +
+                                    "•\tremove {int index}: удалить элемент, находящийся в заданной позиции коллекции\n" +
+                                    "•\tinfo: вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
+                                    "•\tremove {element}: удалить элемент из коллекции по его значению\n" +
+                                    "•\tadd_if_max {element}: добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции\n" +
+                                    "•\tremove_greater {element}: удалить из коллекции все элементы, превышающие заданный\n" +
+                                    "•\tinsert {int index} {element}: добавить новый элемент в заданную позицию\n" +
+                                    "•\tadd_if_min {element}: добавить новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции\n" +
+                                    "•\tremove_first: удалить первый элемент из коллекции\n" +
+                                    "•\tremove_lower {element}: удалить из коллекции все элементы, меньшие, чем заданный\n" +
+                                    "•\tclear: очистить коллекцию\n" +
+                                    "•\tadd {element}: добавить новый элемент в коллекцию\n" +
+                                    "•\tload: перечитать коллекцию из файла\n ");
+                        }
                         case "remove_last": {
                             ch.removeLast();
                         }
@@ -106,13 +153,35 @@ public class Main {
                     System.out.println("Wrong arguments");
                 } catch (com.google.gson.JsonSyntaxException e) {
                     System.out.println("Wrong Json format");
+                } catch (SecurityException e) {
+                    System.out.println("Permission denied");
+                } catch (NullPointerException e) {
+                    System.out.println("Null names are not permitted");
+                } catch (IOException e) {
+                    System.out.println("Wrong path");
+                } catch (Throwable e){
+                    System.out.println("Unknown error");
                 }
             } catch (WrongArgsException e){
                 System.out.println(e.getMessage());
+            } catch (StringIndexOutOfBoundsException | NoSuchElementException e){
+                System.out.println("Wrong command format");
             }
         } while(!exitCheck.equals("exit"));
 
+    }
+}
 
-
+class ShutdownHook extends Thread{
+    CollectionHandler ch;
+    ShutdownHook(CollectionHandler inch) {
+        this.ch = inch;
+    }
+    public void run(){
+        try {
+        ch.save();}
+        catch (NullPointerException e){
+            System.out.println("No file");
+        }
     }
 }

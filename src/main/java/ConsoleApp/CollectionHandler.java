@@ -5,10 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 import static ConsoleApp.Instruments.extractFileName;
@@ -17,6 +14,7 @@ import static ConsoleApp.Instruments.extractFilePath;
 /**
  * This class provides main methods and fields for operating with collection
  */
+
 public class CollectionHandler {
     public Stack<Event> Events = new Stack<>();
     public File file;
@@ -37,7 +35,7 @@ public class CollectionHandler {
      * The method reloads collection Events from the file
      *
      */
-    public void load() {
+    public void load() throws IOException {
         Events.clear();
         this.Import(file);
     }
@@ -46,28 +44,24 @@ public class CollectionHandler {
      * A method to read new collection from a
      * @param file, a parameter for the file from where to import
      */
-    public void Import(File file) {
-        try {
-            FileReader fr = new FileReader(file);
-            scan = new Scanner(fr);
-            StringBuilder sb = new StringBuilder();
-            while(scan.hasNextLine())
-            {
-                sb.append(scan.nextLine());
-            }
-            String json = sb.toString();
-            Events = gson.fromJson(json, new TypeToken<Stack<Event>>(){}.getType());
-            fr.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void Import(File file) throws IOException {
+        FileReader fr = new FileReader(file);
+        scan = new Scanner(fr);
+        StringBuilder sb = new StringBuilder();
+        while (scan.hasNextLine()) {
+            sb.append(scan.nextLine());
         }
+        String json = sb.toString();
+        Events = gson.fromJson(json, new TypeToken<Stack<Event>>() {
+        }.getType());
+        fr.close();
     }
 
     /**
      * Override the Import method to access the file via
      * @param path parameter
      */
-    public void Import(String path){
+    public void Import(String path) throws IOException{
         File file = new File(extractFilePath(path), extractFileName(path));
         Import(file);
     }
@@ -100,14 +94,18 @@ public class CollectionHandler {
      * Pops from the Stack
      */
     public void removeLast(){
-        Events.pop();
+        if (!Events.isEmpty()) {
+            Events.pop();
+        } else System.out.println("Collection is empty");
     }
 
     /**
      * Removes the element with zero index
      */
     public void removeFirst(){
-        Events.removeElementAt(0);
+        if (!Events.isEmpty()) {
+            Events.removeElementAt(0);
+        } else System.out.println("Collection is empty");
     }
 
     /**
@@ -115,7 +113,9 @@ public class CollectionHandler {
      * @param i index
      */
     public void remove(int i){
-        Events.removeElementAt(i);
+        if (!Events.isEmpty()) {
+            Events.removeElementAt(i);
+        } else System.out.println("Collection is empty");
     }
 
     /**
@@ -123,7 +123,9 @@ public class CollectionHandler {
      * @param e Example event
      */
     public void remove(Event e){
-        Events.removeIf(a -> a.compareTo(e) == 0);
+        if (!Events.removeIf(a -> a.compareTo(e) == 0)){
+            System.out.println("No such element");
+        }
     }
 
     /**
@@ -173,9 +175,15 @@ public class CollectionHandler {
      * prints all elements of the Collection to StdOut
      */
     public void contents(){
-        for (Event event:Events) {
-            System.out.println(event.name);
-        }
+        if (!Events.isEmpty()) {
+            for (Event event : Events) {
+                if (event.name != null) {
+                    System.out.println(event.name);
+                } else {
+                    System.out.println("null");
+                }
+            }
+        } else System.out.println("Collection is empty");
     }
 
     /**

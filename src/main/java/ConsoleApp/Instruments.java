@@ -5,14 +5,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Instruments {
     public static String extractFilePath(String path){
-        return path.substring(0, path.lastIndexOf('\\') + 1);
+        if (path.contains("/")) {
+            return path.substring(0, path.lastIndexOf('/') + 1);
+        } else if (path.contains("\\")){
+            return path.substring(0, path.lastIndexOf('\\') + 1);
+        } else
+            return ".";
     }
 
     public static String extractFileName(String path){
-        return path.substring(path.lastIndexOf('\\') + 1, path.length());
+        if (path.contains("/")) {
+            return path.substring(path.lastIndexOf('/') + 1, path.length());
+        } else if (path.contains("\\")){
+            return path.substring(path.lastIndexOf('\\') + 1, path.length());
+        } else
+            return path;
     }
 
     static Event FromJson(String s) {
@@ -22,7 +33,29 @@ public class Instruments {
         return event;
     }
 
-    public static ArrayList<String> parseCmd(String cmd) throws WrongArgsException{
+    static String multilineJson(Scanner scn) {
+        StringBuilder sb = new StringBuilder();
+        String first = scn.nextLine();
+        sb.append(first);
+            int countOpen = first.length() - first.replace("{", "").length();
+            int countClose = first.length() - first.replace("}", "").length();
+            int diff = countOpen-countClose;
+            if (diff!=0) {
+                do {
+                    String string = scn.nextLine();
+                    countOpen = string.length() - string.replace("{", "").length();
+                    countClose = string.length() - string.replace("}", "").length();
+                    diff = diff + countOpen - countClose;
+                    sb.append(string);
+                } while (diff > 0);
+            }
+            System.out.println("finished entering command");
+        return sb.toString();
+    }
+
+    public static ArrayList<String> parseCmd() throws WrongArgsException, StringIndexOutOfBoundsException{
+        Scanner scn = new Scanner(System.in);
+        String cmd = multilineJson(scn);
         ArrayList<String> listArgs = new ArrayList<>();
         String text[] = cmd.split(" \\{",2);
         if (text.length>1) {
